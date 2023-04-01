@@ -2,13 +2,10 @@ import {
   StyleSheet,
   View,
   Text,
-  Button,
   TextInput,
   ImageBackground,
   TouchableOpacity,
   KeyboardAvoidingView,
-  Alert,
-  Pressable,
 } from 'react-native';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -28,15 +25,12 @@ const Start = ({ navigation }) => {
     // setOptions function of the navigation prop to hide the navigation header
     // [] - means it doesn't rely on any state changes of this component
     // code inside useEffect will be called only once, right after the component is mounted
-
     navigation.setOptions({ headerShown: false });
   }, []);
 
   const [name, setName] = useState('');
   const [userOption, setUserOption] = useState('');
   const [color, setColor] = useState('');
-
-  const { black, purple, grey, green } = backgroundColors;
 
   return (
     <View style={styles.container}>
@@ -58,40 +52,24 @@ const Start = ({ navigation }) => {
 
           <View style={styles.colorContainer}>
             <Text style={styles.colorText}>Choose your Background:</Text>
-
             <View style={styles.colorWrapper}>
-              <TouchableOpacity
-                style={[styles.color, black]}
-                onPress={() => {
-                  setColor(black.backgroundColor);
-                }}
-              >
-                <View style={styles.innerColorSelected}></View>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.color, purple]}
-                onPress={() => {
-                  setColor(purple.backgroundColor);
-                }}
-              >
-                <View style={styles.innerColorSelected}></View>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.color, grey]}
-                onPress={() => {
-                  setColor(grey.backgroundColor);
-                }}
-              >
-                <View style={styles.innerColorSelected}></View>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.color, green]}
-                onPress={() => {
-                  setColor(green.backgroundColor);
-                }}
-              >
-                <View style={styles.innerColorSelected}></View>
-              </TouchableOpacity>
+              {Object.entries(backgroundColors).map(([key, value]) => (
+                <TouchableOpacity
+                  key={key} // name of the color
+                  style={[
+                    styles.color,
+                    value, // backgroundColor: '#...'
+                    // color === value.backgroundColor && styles.colorSelected,
+                  ]}
+                  onPress={() => setColor(value.backgroundColor)}
+                >
+                  {/* if state of color is the same as backgroundof selectd item, 
+                  we render innerColorSelected (to make small white border) */}
+                  {color === value.backgroundColor && (
+                    <View style={styles.innerColorSelected} />
+                  )}
+                </TouchableOpacity>
+              ))}
             </View>
           </View>
           <TouchableOpacity
