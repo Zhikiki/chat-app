@@ -43,6 +43,9 @@ const Start = ({ navigation }) => {
           <View style={styles.inputContainer}>
             <Ionicons name='person-outline' size={26} color='#757083' />
             <TextInput
+              accessible={true}
+              accessibilityLabel='Name input'
+              accessibilityHint="Let's you enter your name to be used in the chat"
               style={styles.nameInput}
               onChangeText={setName}
               value={name}
@@ -55,6 +58,10 @@ const Start = ({ navigation }) => {
             <View style={styles.colorWrapper}>
               {Object.entries(backgroundColors).map(([key, value]) => (
                 <TouchableOpacity
+                  accessible={true}
+                  accessibilityLabel='Choose background for your chat'
+                  accessibilityHint={`Let's you to choose ${key} color as a background for your chat`}
+                  accessibilityRole='radio'
                   key={key} // name of the color
                   style={[
                     styles.color,
@@ -73,6 +80,10 @@ const Start = ({ navigation }) => {
             </View>
           </View>
           <TouchableOpacity
+            accessible={true}
+            accessibilityLabel='Start chating'
+            accessibilityHint="Let's you open the screen to start chat"
+            accessibilityRole='button'
             style={[styles.nameBox, styles.chatBox]}
             onPress={() =>
               navigation.navigate('Chat', { name: name, color: color })
@@ -91,6 +102,9 @@ const Start = ({ navigation }) => {
       Here we say to which screen we want to navigate
       And also we send prop name (from input) */}
       </ImageBackground>
+      {Platform.OS === 'ios' ? (
+        <KeyboardAvoidingView behavior='padding' style={styles} />
+      ) : null}
     </View>
   );
 };
@@ -145,6 +159,7 @@ const styles = StyleSheet.create({
   },
 
   nameInput: {
+    flex: 1,
     paddingLeft: 15,
   },
 
