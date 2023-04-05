@@ -22,7 +22,6 @@ import {
   query,
   orderBy,
   where,
-  DocumentSnapshot,
 } from 'firebase/firestore';
 
 // route is prop that is sent through navigation.
@@ -73,16 +72,14 @@ const Chat = ({ route, navigation, db }) => {
   }, []);
 
   /** onSend is called when a user sends a message
-   * setMessage() is called with a callback function passed into it
-   * previousMessages - parameter represents a variable that refers to the latest value of the state
-   * append() function provided by GiftedChat, appends the new message to the original list of messages from previousMessages
+   * addDoc will add new document to collection and generate id
+    we use db - database intialised in the App.js
+    messages - name of the collection
+    newMessages[0] - object created from user inputs (listName, item1, item2)
    */
   const onSend = (newMessages) => {
-    // setMessages((previousMessages) =>
-    //   GiftedChat.append(previousMessages, newMessages)
-    // );
+    addDoc(collection(db, 'messages'), newMessages[0]);
   };
-
 
   const rightBobbleBackground = (backgroundColor) => {
     if (backgroundColor === '#090c08') {
@@ -98,7 +95,7 @@ const Chat = ({ route, navigation, db }) => {
       return '#2C4937';
     }
   };
-  
+
   /**Customizing Bubbles
    * ...props - helps to inherit props
    * wrapperStyle - name of the style
@@ -144,7 +141,7 @@ const Chat = ({ route, navigation, db }) => {
         renderSystemMessage={renderSystemMessage}
         renderDay={renderDay}
         onSend={(messages) => onSend(messages)}
-        user={{ _id: 1 }}
+        user={{ _id: route.params.userID, username: route.params.name }}
       />
       {/* If the platform’s OS is Android, add the component KeyboardAvoidingView;
       otherwise, insert nothing. */}
