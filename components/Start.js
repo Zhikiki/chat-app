@@ -6,9 +6,13 @@ import {
   ImageBackground,
   TouchableOpacity,
   KeyboardAvoidingView,
+  Alert
 } from 'react-native';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
+
+// importing anonymous auth firebase functions
+import { getAuth, signInAnonymously } from 'firebase/auth';
 
 import { useState, useEffect } from 'react';
 
@@ -21,6 +25,28 @@ const backgroundColors = {
 
 // The navigation prop is passed to every component included in the Stack.Navigator in App.js
 const Start = ({ navigation }) => {
+  // initializing the Firebase authentication handler (needed for signInAnonymously())
+  const auth = getAuth();
+
+  const signInUser = () => {
+    /* signInAnonymously() returns a promise
+    we get an information object (represented by result) 
+    as the user is signed in, the app navigates to ShoppingListsRealTime
+    we also pass result.user.uid (which is assigned to the route parameter userID) */
+    signInAnonymously(auth)
+      .then((result) => {
+        navigation.navigate('Chat', {
+          userID: result.user.uid,
+          name: name,
+          color: color,
+        });
+        Alert.alert('Signed in successfully.');
+      })
+      .catch((error) => {
+        Alert.alert('Unable to sign in, try again later.');
+      });
+  };
+
   useEffect(() => {
     // setOptions function of the navigation prop to hide the navigation header
     // [] - means it doesn't rely on any state changes of this component
@@ -85,9 +111,7 @@ const Start = ({ navigation }) => {
             accessibilityHint="Let's you open the screen to start chat"
             accessibilityRole='button'
             style={[styles.nameBox, styles.chatBox]}
-            onPress={() =>
-              navigation.navigate('Chat', { name: name, color: color })
-            }
+            onPress={signInUser}
           >
             <Text style={[styles.colorText, styles.chatBoxText]}>
               Start Chatting
