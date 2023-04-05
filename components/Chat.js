@@ -14,6 +14,17 @@ import {
   Day,
 } from 'react-native-gifted-chat';
 
+// import firebase functions for quering data
+import {
+  collection,
+  addDoc,
+  onSnapshot,
+  query,
+  orderBy,
+  where,
+  DocumentSnapshot,
+} from 'firebase/firestore';
+
 // route is prop that is sent through navigation.
 // This prop was set to all screen components listed under Stack.Navigator in App.js
 // The navigation prop is passed to every component included in the Stack.Navigator in App.js
@@ -26,27 +37,32 @@ const Chat = ({ route, navigation, db }) => {
 
   /* Setting the message state with useEffect()
   useEffect gets called right after component mounts
-  set the state with a static message 
-  so that you’ll be able to see each element of the UI displayed on the screen right away.*/
+  useEffect() attaches listener only once, when component is mounted
+  [] - dependency array is empty, we don't need to call useEffect more then once
+  it will will be automatically run whenever there’s a change in the targeted database reference
+  onSnapshot() - cheks whether there were any changes in collection and its documents. Arguments:
+  - collection(db, 'messages') - reference that you attach the listener to
+  - The callback function that’s called whenever there’s a change detected in the reference.
+  In this case in callback function we get id and key/value of the items and push them to newMessages array
+  then we set newMessages as a value for messages setMessages(newMessages);.*/
   useEffect(() => {
-    setMessages([
-      {
-        _id: 1,
-        text: 'Hello developer',
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: 'React Native',
-          avatar: 'https://placeimg.com/140/140/any',
-        },
-      },
-      {
-        _id: 2,
-        text: `${name} entered the chat`,
-        createdAt: new Date(),
-        system: true,
-      },
-    ]);
+    const q = query(collection(db, 'messages'), orderBy('createdAt', 'desc'));
+    const unsubMessages = onSnapshot(q, (documentsSnapshot) => {
+      let newMessages = [];
+      documentsSnapshot.forEach((doc) => {
+        newMessages.push({
+          id: doc.id,
+          ...doc.data(),
+          createdAt: new Date(doc.data().createdAt.toMillis()),
+        });
+      });
+      setMessages(newMessages);
+    });
+
+    // code to execute when the component will be unmounted
+    return () => {
+      if (unsubMessages) unsubMessages();
+    };
   }, []);
 
   useEffect(() => {
@@ -62,14 +78,12 @@ const Chat = ({ route, navigation, db }) => {
    * append() function provided by GiftedChat, appends the new message to the original list of messages from previousMessages
    */
   const onSend = (newMessages) => {
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, newMessages)
-    );
+    // setMessages((previousMessages) =>
+    //   GiftedChat.append(previousMessages, newMessages)
+    // );
   };
 
-  // useEffect(() => {
-  //   rightBobbleBackground(color);
-  // });
+
   const rightBobbleBackground = (backgroundColor) => {
     if (backgroundColor === '#090c08') {
       return '#526675';
@@ -84,6 +98,7 @@ const Chat = ({ route, navigation, db }) => {
       return '#2C4937';
     }
   };
+  
   /**Customizing Bubbles
    * ...props - helps to inherit props
    * wrapperStyle - name of the style
