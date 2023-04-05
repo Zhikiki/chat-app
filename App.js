@@ -4,6 +4,10 @@ import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
+// import firebase functions for initialisation Cloud Firestore
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
+
 import Start from './components/Start';
 import Chat from './components/Chat';
 
@@ -11,6 +15,22 @@ import Chat from './components/Chat';
 const Stack = createNativeStackNavigator();
 
 const App = () => {
+  // chat_app Firebase configuration
+  const firebaseConfig = {
+    apiKey: 'AIzaSyCVLj54jAkYZuEm2pOFXmZGT3SZoGhOU68',
+    authDomain: 'chat-app-db-cfc15.firebaseapp.com',
+    projectId: 'chat-app-db-cfc15',
+    storageBucket: 'chat-app-db-cfc15.appspot.com',
+    messagingSenderId: '971427698123',
+    appId: '1:971427698123:web:7fa8f968b3c50c5e55d24e',
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+
+  // Initialize Cloud Firestore and get a reference to the service
+  const db = getFirestore(app);
+
   return (
     /* Navigation Container is responsible for managing your app state and 
      linking your top-level navigator to the app environment.*/
