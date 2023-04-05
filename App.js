@@ -41,7 +41,10 @@ const App = () => {
         component: The component you want to display as the screen; 
         name: The handler that you’ll use to open or navigate to the screen */}
         <Stack.Screen name='Start' component={Start} />
-        <Stack.Screen name='Chat' component={Chat} />
+        <Stack.Screen name='Chat'>
+          {(props) => <Chat db={db} {...props} />}
+        </Stack.Screen>
+        {/* <Stack.Screen name='Chat' component={Chat} /> */}
       </Stack.Navigator>
       {/* <View style={styles.container}>
         <Text>I'm building Navigation</Text>

@@ -17,7 +17,7 @@ import {
 // route is prop that is sent through navigation.
 // This prop was set to all screen components listed under Stack.Navigator in App.js
 // The navigation prop is passed to every component included in the Stack.Navigator in App.js
-const Chat = ({ route, navigation }) => {
+const Chat = ({ route, navigation, db }) => {
   // the messages state initialization using useState() to send, receive, and display messages
   const [messages, setMessages] = useState([]);
 
