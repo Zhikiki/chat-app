@@ -136,7 +136,14 @@ const CustomActions = ({
   };
 
   return (
-    <TouchableOpacity style={styles.container} onPress={onActionPress}>
+    <TouchableOpacity
+      accessible={true}
+      accessibilityLabel='Show options of actions'
+      accessibilityHint="Let's you open the list of awailable actions"
+      accessibilityRole='button'
+      style={styles.container}
+      onPress={onActionPress}
+    >
       <View
         style={[
           styles.wrapper,
