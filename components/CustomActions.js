@@ -1,9 +1,11 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 // import to make ActionSheet avaliable to fetch
 import { useActionSheet } from '@expo/react-native-action-sheet';
 
-const CustomActions = ({ wrapperStyle, iconTextStyle, color }) => {
+import * as Location from 'expo-location';
+
+const CustomActions = ({ wrapperStyle, iconTextStyle, color, onSend }) => {
   //setting variable actionSheet value as useActionSheet() method, which returns a reference to Gifted Chat’s ActionSheet
   const actionSheet = useActionSheet();
 
@@ -19,6 +21,30 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, color }) => {
 
     // variable defines index of option 'Cancel'
     const cancelButtonIndex = options.length - 1;
+
+    /**Function makes avaliable to send location
+     * Location.requestForegroundPermissionsAsync() - request permission to access the device’s location
+     * if permissions.granted = true we get access to read location data
+     * Location.getCurrentPositionAsync() - returns an object with coordiantes of user's location
+     * to onSend we send to onSend a message that only contains location property
+     * it enables renderCustomView to render the MapView in a message bubble
+     * other properties added by default (createdAt, _id, and user)
+     */
+    const getLocation = async () => {
+      let permissions = await Location.requestForegroundPermissionsAsync();
+
+      if (permissions?.granted) {
+        const location = await Location.getCurrentPositionAsync({});
+        if (location) {
+          onSend({
+            location: {
+              longitude: location.coords.longitude,
+              latitude: location.coords.latitude,
+            },
+          });
+        } else Alert.alert('Error occurred while fetching location');
+      } else Alert.alert("Permissions haven't been granted.");
+    };
 
     actionSheet.showActionSheetWithOptions(
       { options, cancelButtonIndex },

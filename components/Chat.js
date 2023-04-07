@@ -24,6 +24,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // import CustomActions component
 import CustomActions from './CustomActions';
 
+// importing packages enabling Geolocation communication features
+
+import MapView from 'react-native-maps';
+
 // route is prop that is sent through navigation.
 // This prop was set to all screen components listed under Stack.Navigator in App.js
 // The navigation prop is passed to every component included in the Stack.Navigator in App.js
@@ -177,6 +181,26 @@ const Chat = ({ route, navigation, db, isConnected }) => {
     return <CustomActions {...props} color={color} />;
   };
 
+  /**renderCustomView checks if the currentMessage contains location data.
+   * If true, returns a MapView*/
+  const renderCustomView = (props) => {
+    const { currentMessage } = props;
+    if (currentMessage.location) {
+      return (
+        <MapView
+          style={{ width: 250, height: 200, borderRadius: 13, margin: 3 }}
+          region={{
+            latitude: currentMessage.location.latitude,
+            longitude: currentMessage.location.longitude,
+            latitudeDelta: 0.0922, // determine the size of the map
+            longitudeDelta: 0.0421, // determine the size of the map
+          }}
+        />
+      );
+    }
+    return null;
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: `${color}` }]}>
       <GiftedChat
@@ -186,6 +210,7 @@ const Chat = ({ route, navigation, db, isConnected }) => {
         renderSystemMessage={renderSystemMessage}
         renderDay={renderDay}
         renderActions={renderCustomActions}
+        renderCustomView={renderCustomView}
         onSend={(messages) => onSend(messages)}
         user={{ _id: route.params.userID, username: route.params.name }}
         showUserAvatar
