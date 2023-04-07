@@ -12,6 +12,7 @@ import {
   Bubble,
   SystemMessage,
   Day,
+  Avatar
 } from 'react-native-gifted-chat';
 
 // import firebase functions for quering data
@@ -142,6 +143,7 @@ const Chat = ({ route, navigation, db }) => {
         renderDay={renderDay}
         onSend={(messages) => onSend(messages)}
         user={{ _id: route.params.userID, username: route.params.name }}
+        showUserAvatar
       />
       {/* If the platform’s OS is Android, add the component KeyboardAvoidingView;
       otherwise, insert nothing. */}
@@ -157,9 +159,6 @@ const Chat = ({ route, navigation, db }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
-    // padding: 20,
   },
 });
 
