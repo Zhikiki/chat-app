@@ -7,6 +7,7 @@ import {
   Day,
   InputToolbar,
   Avatar,
+  ScrollView,
 } from 'react-native-gifted-chat';
 
 // import firebase functions for quering data
@@ -157,8 +158,18 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
           {...props}
           containerStyle={{
             backgroundColor: `${rightBobbleBackground(color)}`,
-            height: 70,
-            padding: 10,
+            color: '#FFF',
+            // width: '100%',
+            // height: 70,
+            // paddingBottom: ,
+          }}
+          textInputStyle={{
+            color: '#000',
+            borderRadius: 15,
+            backgroundColor: '#FFF',
+            marginRight: 10,
+            paddingLeft: 10,
+            // paddingBottom: 10,
           }}
         />
       );
@@ -236,6 +247,7 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
       {Platform.OS === 'android' ? (
         <KeyboardAvoidingView behavior='height' />
       ) : null}
+
       {/* // // <Text>Hello Chat!</Text>
       //{' '} */}
     </View>

@@ -158,17 +158,21 @@ const CustomActions = ({
 };
 const styles = StyleSheet.create({
   container: {
+    // flex:1,
+    justifyContent: 'center',
+    alignContent: 'center',
     width: 35,
     height: 35,
     marginLeft: 12,
-    marginBottom: 10,
+    marginBottom: 5,
+    // marginTop: 5,
   },
   wrapper: {
     borderRadius: 50,
     borderWidth: 1,
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'space-around',
+    justifyContent: 'center',
   },
   iconText: {
     color: '#FFF',
