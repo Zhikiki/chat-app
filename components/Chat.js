@@ -1,18 +1,11 @@
-import {
-  StyleSheet,
-  View,
-  KeyboardAvoidingView,
-  Platform,
-  Text,
-  Alert,
-} from 'react-native';
+import { StyleSheet, View, KeyboardAvoidingView, Platform } from 'react-native';
 import { useEffect, useState } from 'react';
 import {
   GiftedChat,
   Bubble,
   SystemMessage,
   Day,
-  Avatar
+  Avatar,
 } from 'react-native-gifted-chat';
 
 // import firebase functions for quering data
@@ -22,8 +15,10 @@ import {
   onSnapshot,
   query,
   orderBy,
-  where,
 } from 'firebase/firestore';
+
+// Importing storage for native apps
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // route is prop that is sent through navigation.
 // This prop was set to all screen components listed under Stack.Navigator in App.js
@@ -56,6 +51,7 @@ const Chat = ({ route, navigation, db }) => {
           createdAt: new Date(doc.data().createdAt.toMillis()),
         });
       });
+      cacheMessages(newMessages);
       setMessages(newMessages);
     });
 
@@ -64,6 +60,17 @@ const Chat = ({ route, navigation, db }) => {
       if (unsubMessages) unsubMessages();
     };
   }, []);
+
+  const cacheMessages = async (messagesToCache) => {
+    try {
+      await AsyncStorage.setItem(
+        'messages_stored',
+        JSON.stringify(newMessages)
+      );
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
   useEffect(() => {
     // setOptions function of the navigation prop to set the navigation header’s title
