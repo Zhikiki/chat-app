@@ -23,13 +23,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // route is prop that is sent through navigation.
 // This prop was set to all screen components listed under Stack.Navigator in App.js
 // The navigation prop is passed to every component included in the Stack.Navigator in App.js
-const Chat = ({ route, navigation, db }) => {
+const Chat = ({ route, navigation, db, isConnected }) => {
   // the messages state initialization using useState() to send, receive, and display messages
   const [messages, setMessages] = useState([]);
 
   // We can access the user’s name (from Screen 1 input) via route.params.name
   const { name, color } = route.params;
 
+  let unsubMessages;
   /* Setting the message state with useEffect()
   useEffect gets called right after component mounts
   useEffect() attaches listener only once, when component is mounted
@@ -41,26 +42,45 @@ const Chat = ({ route, navigation, db }) => {
   In this case in callback function we get id and key/value of the items and push them to newMessages array
   then we set newMessages as a value for messages setMessages(newMessages);.*/
   useEffect(() => {
-    const q = query(collection(db, 'messages'), orderBy('createdAt', 'desc'));
-    const unsubMessages = onSnapshot(q, (documentsSnapshot) => {
-      let newMessages = [];
-      documentsSnapshot.forEach((doc) => {
-        newMessages.push({
-          id: doc.id,
-          ...doc.data(),
-          createdAt: new Date(doc.data().createdAt.toMillis()),
+    if (isConnected === true) {
+      // unregister current onSnapshot() listener to avoid registering multiple listeners when
+      // useEffect code is re-executed.
+      if (unsubMessages) unsubMessages();
+      unsubMessages = null;
+
+      const q = query(collection(db, 'messages'), orderBy('createdAt', 'desc'));
+      unsubMessages = onSnapshot(q, (documentsSnapshot) => {
+        let newMessages = [];
+        documentsSnapshot.forEach((doc) => {
+          newMessages.push({
+            id: doc.id,
+            ...doc.data(),
+            createdAt: new Date(doc.data().createdAt.toMillis()),
+          });
         });
+        cacheMessages(newMessages);
+        setMessages(newMessages);
       });
-      cacheMessages(newMessages);
-      setMessages(newMessages);
-    });
+    } else {
+      loadCachedMessages();
+    }
 
     // code to execute when the component will be unmounted
     return () => {
       if (unsubMessages) unsubMessages();
     };
-  }, []);
+  }, [isConnected]);
 
+  // async function that sets messages with cached value
+  // || [] will assign an empty array to cachedMessages if the messages_stored item hasn’t been set yet in AsyncStorage
+  const loadCachedMessages = async () => {
+    const cachedMessages =
+      (await AsyncStorage.getItem('messages_stored')) || [];
+    setMessages(JSON.parse(cachedMessages));
+  };
+
+  // cashing data whenever it is updated
+  // try-catch function - to prevent the app from crashing in case AsyncStorage fails to store the data.
   const cacheMessages = async (messagesToCache) => {
     try {
       await AsyncStorage.setItem(
