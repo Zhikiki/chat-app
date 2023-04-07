@@ -5,6 +5,7 @@ import {
   Bubble,
   SystemMessage,
   Day,
+  InputToolbar,
   Avatar,
 } from 'react-native-gifted-chat';
 
@@ -33,14 +34,13 @@ const Chat = ({ route, navigation, db, isConnected }) => {
   let unsubMessages;
   /* Setting the message state with useEffect()
   useEffect gets called right after component mounts
-  useEffect() attaches listener only once, when component is mounted
-  [] - dependency array is empty, we don't need to call useEffect more then once
-  it will will be automatically run whenever there’s a change in the targeted database reference
+  useEffect() attaches listener every time when connectivity status changes 
   onSnapshot() - cheks whether there were any changes in collection and its documents. Arguments:
   - collection(db, 'messages') - reference that you attach the listener to
   - The callback function that’s called whenever there’s a change detected in the reference.
   In this case in callback function we get id and key/value of the items and push them to newMessages array
-  then we set newMessages as a value for messages setMessages(newMessages);.*/
+  then we set newMessages as a value for messages setMessages(newMessages);
+  if there is no connection messages are set with cached data */
   useEffect(() => {
     if (isConnected === true) {
       // unregister current onSnapshot() listener to avoid registering multiple listeners when
@@ -85,7 +85,7 @@ const Chat = ({ route, navigation, db, isConnected }) => {
     try {
       await AsyncStorage.setItem(
         'messages_stored',
-        JSON.stringify(newMessages)
+        JSON.stringify(messagesToCache)
       );
     } catch (error) {
       console.log(error.message);
@@ -143,6 +143,14 @@ const Chat = ({ route, navigation, db, isConnected }) => {
     );
   };
 
+  const renderInputToolbar = (props) => {
+    if (isConnected) {
+      return <InputToolbar {...props} />;
+    } else {
+      return null;
+    }
+  };
+
   const renderSystemMessage = (props) => {
     return (
       <SystemMessage
@@ -166,6 +174,7 @@ const Chat = ({ route, navigation, db, isConnected }) => {
       <GiftedChat
         messages={messages}
         renderBubble={renderBubble}
+        renderInputToolbar={renderInputToolbar}
         renderSystemMessage={renderSystemMessage}
         renderDay={renderDay}
         onSend={(messages) => onSend(messages)}
