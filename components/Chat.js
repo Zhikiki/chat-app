@@ -21,6 +21,9 @@ import {
 // Importing storage for native apps
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// import CustomActions component
+import CustomActions from './CustomActions';
+
 // route is prop that is sent through navigation.
 // This prop was set to all screen components listed under Stack.Navigator in App.js
 // The navigation prop is passed to every component included in the Stack.Navigator in App.js
@@ -169,6 +172,11 @@ const Chat = ({ route, navigation, db, isConnected }) => {
     );
   };
 
+  // renderCustomActions function is responsible for creating the circle button
+  const renderCustomActions = (props) => {
+    return <CustomActions {...props} color={color} />;
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: `${color}` }]}>
       <GiftedChat
@@ -177,6 +185,7 @@ const Chat = ({ route, navigation, db, isConnected }) => {
         renderInputToolbar={renderInputToolbar}
         renderSystemMessage={renderSystemMessage}
         renderDay={renderDay}
+        renderActions={renderCustomActions}
         onSend={(messages) => onSend(messages)}
         user={{ _id: route.params.userID, username: route.params.name }}
         showUserAvatar
