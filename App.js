@@ -10,6 +10,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 
+// import function for initialisation of Firebase Storage (images)
+import { getStorage } from 'firebase/storage';
+
 // import package to verify internet connection
 import { useNetInfo } from '@react-native-community/netinfo';
 
@@ -57,6 +60,9 @@ const App = () => {
   // Initialize Cloud Firestore and get a reference to the service
   const db = getFirestore(app);
 
+  // Initialize Firestore Storage and get a reference to the service
+  const storage = getStorage(app);
+
   return (
     /* Navigation Container is responsible for managing your app state and 
      linking your top-level navigator to the app environment.*/
@@ -72,6 +78,7 @@ const App = () => {
             <Chat
               isConnected={connectionStatus.isConnected}
               db={db}
+              storage={storage}
               {...props}
             />
           )}
